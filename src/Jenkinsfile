@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.9'
+            args '-u root'
+        }
+    }
 
     stages {
         stage('Clone Repository') {
@@ -12,7 +17,7 @@ pipeline {
             steps {
                 script {
                     echo 'Setting up the environment...'
-                    sh 'python3 -m venv venv'
+                    sh 'python -m venv venv'
                     sh '. venv/bin/activate && pip install -r requirements.txt'
                 }
             }
@@ -43,6 +48,7 @@ pipeline {
                 unsuccessful {
                     script {
                         echo 'Static analysis found issues.'
+                        // Set the build result to unstable if static analysis is just nice to have
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
@@ -56,4 +62,3 @@ pipeline {
         }
     }
 }
-
