@@ -1,5 +1,13 @@
 pipeline {
     agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bjesuslopezg/python-ci-test'
+            }
+        }
+
         stage('Setup Environment') {
             steps {
                 script {
@@ -19,9 +27,33 @@ pipeline {
             }
         }
 
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    echo 'Performing static code analysis...'
+                    sh '. venv/bin/activate && pylint your_project_module'
+                }
+            }
+            post {
+                always {
+                    script {
+                        echo 'Static analysis completed.'
+                    }
+                }
+                unsuccessful {
+                    script {
+                        echo 'Static analysis found issues.'
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+    }
+
     post {
         always {
             cleanWs()
         }
     }
 }
+
