@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import config
 #from models.base import *
-from routers import sabana
+from routers import sabana, diplomado
 
 
 app = FastAPI(
@@ -10,3 +10,4 @@ app = FastAPI(
 )
 
 app.include_router(sabana.router, prefix="/sabana", tags=["Sabana"]) 
+app.include_router(diplomado.router, prefix="/diplomado", tags=["Diplomado"]) 
